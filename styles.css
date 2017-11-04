@@ -1,3 +1,16 @@
+body {
+    width: 500px;
+    text-align: center;
+}
+
 h1 {
-    color: blue
+    color: blue;
+}
+
+input {
+    width: 100%;
+}
+
+#content {
+    width: 100%;
 }
