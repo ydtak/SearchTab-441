@@ -1,10 +1,7 @@
 body {
+    padding: 24px;
     width: 500px;
     text-align: center;
-}
-
-h1 {
-    color: blue;
 }
 
 input {
@@ -13,4 +10,11 @@ input {
 
 #content {
     width: 100%;
+}
+
+.btn {
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    text-overflow: ellipsis;
 }

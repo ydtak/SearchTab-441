@@ -15,6 +15,8 @@ function isMatch(tab, query) {
 /** Adds HTML for search result item and appends to div. */
 function addSearchResult(div, tab) {
     var button = document.createElement("button");
+    button.classList.add("btn");
+    button.classList.add("btn-block");
     button.innerHTML = tab.title;
     button.onclick = function() {activateTab(tab.windowId, tab.id)};
     div.appendChild(button);
@@ -90,5 +92,6 @@ window.onload = function() {
     var button_autogroup = document.createElement("button");
     button_autogroup.innerHTML = "Autogroup";
     button_autogroup.onclick = function() {onClickAutogroup()};
+    button_autogroup.classList.add("btn");
     document.getElementById("autogroup_div").appendChild(button_autogroup);
 }
