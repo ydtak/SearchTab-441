@@ -81,6 +81,7 @@ function renderSearchResults(search_query) {
 /** Callback method is triggered when user modifies search query in the search box. */
 var onSearchInputChanged = function(event) {
     var input_search_tab = document.getElementById("input_search_tab");
+    bg.last_search_query = input_search_tab.value;
     renderSearchResults(input_search_tab.value);
 }
 
@@ -89,6 +90,11 @@ window.onload = function() {
     var input_search_tab = document.getElementById("input_search_tab");
     input_search_tab.addEventListener("input", onSearchInputChanged);
 
+    // reinput last query
+    input_search_tab.value = bg.last_search_query;
+    renderSearchResults(input_search_tab.value);
+
+    // create autogroup button
     var button_autogroup = document.createElement("button");
     button_autogroup.innerHTML = "Autogroup";
     button_autogroup.onclick = function() {onClickAutogroup()};

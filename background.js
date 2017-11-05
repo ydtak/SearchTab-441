@@ -1,6 +1,9 @@
 /** Currently open tab data. */
 var tabs = [];
 
+/** Last search query (persist between opening and closing the extension). */
+var last_search_query = "";
+
 /** 
  * Callback method is triggered when all currently open chrome browser windows 
  * are retrieved.
