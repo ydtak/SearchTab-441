@@ -12,11 +12,15 @@ var onGetWindows = function(windows) {
     }
 }
 
+/** Callback method is triggered when open tabs are updated. */
+function onUpdateTabs() {
+    chrome.windows.getAll({populate: true}, onGetWindows);
+}
 
 function init() {
-    chrome.tabs.onUpdated.addListener(function() {
-	  chrome.windows.getAll({populate: true}, onGetWindows);
-	});
+    chrome.windows.getAll({populate: true}, onGetWindows);      
+    chrome.tabs.onUpdated.addListener(onUpdateTabs);
+    chrome.tabs.onRemoved.addListener(onUpdateTabs);
 }
 
 init();
