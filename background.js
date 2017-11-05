@@ -6,13 +6,17 @@ var tabs = [];
  * are retrieved.
  */
 var onGetWindows = function(windows) {
+	tabs = [];
     for (var i = 0; i < windows.length; ++i) {
         tabs = tabs.concat(windows[i].tabs);
     }
 }
 
+
 function init() {
-    chrome.windows.getAll({populate: true}, onGetWindows);
+    chrome.tabs.onUpdated.addListener(function() {
+	  chrome.windows.getAll({populate: true}, onGetWindows);
+	});
 }
 
 init();
