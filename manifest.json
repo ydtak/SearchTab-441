@@ -15,6 +15,7 @@
     "default_title": "SearchTab"
   },
   "permissions": [
+    "activeTab",
     "tabs",
     "history"
   ]
