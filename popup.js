@@ -85,14 +85,12 @@ function renderSearchResults(search_query) {
     var div = document.getElementById("content");
     div.innerHTML = "";
 
-    if (search_query.trim() != "") {
-        for (var i = 0; i < bg.tabs.length; ++i) {
-            var tab = bg.tabs[i];
-            if (isMatch(tab, search_query)) {
-                addSearchResult(div, tab);
-            }
-        }    
-    }
+    for (var i = 0; i < bg.tabs.length; ++i) {
+        var tab = bg.tabs[i];
+        if (isMatch(tab, search_query)) {
+            addSearchResult(div, tab);
+        }
+    }    
 }
 
 /** Callback method is triggered when user modifies search query in the search box. */
