@@ -4,6 +4,14 @@ var tabs = [];
 /** Last search query (persist between opening and closing the extension). */
 var last_search_query = "";
 
+
+/** UI States. */
+const UI_AUTOGROUP = "ui_autogroup";
+const UI_SEARCH = "ui_search";
+
+/** Current state of popup UI. */
+var ui_state = UI_SEARCH;
+
 /** 
  * Callback method is triggered when all currently open chrome browser windows 
  * are retrieved.
