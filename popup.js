@@ -92,6 +92,7 @@ window.onload = function() {
 
     // reinput last query
     input_search_tab.value = bg.last_search_query;
+    input_search_tab.select();
     renderSearchResults(input_search_tab.value);
 
     // create autogroup button
