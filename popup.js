@@ -1,7 +1,7 @@
 
 /** UI States. */
-const UI_AUTOGROUP = "ui_autogroup";
-const UI_SEARCH = "ui_search";
+const UI_AUTOGROUP = "UI_AUTOGROUP";
+const UI_NORMAL = "UI_NORMAL";
 
 /** Reference to background page. */
 var bg = chrome.extension.getBackgroundPage();
@@ -35,33 +35,8 @@ function activateTab(window_id, tab_id) {
 
 /** Onclick method for UI toggle button. */
 function onClickToggleUi() {
-    bg.ui_state = bg.ui_state === UI_SEARCH ? UI_AUTOGROUP : UI_SEARCH;
-    var div = document.getElementById("content");
-    var button_toggle_ui = document.getElementById("button_toggle_ui");
-    var input_search_tab = document.getElementById("input_search_tab");
-    div.innerHTML = "";
-    if (bg.ui_state === UI_AUTOGROUP) {
-        button_toggle_ui.innerHTML = "Search";
-        input_search_tab.style.visibility = "hidden";   
-        appendGroup(
-            div, 
-            "Stackoverflow", 
-            function(tab) {
-                return normalizeString(tab.url).match(normalizeString("stackoverflow"))
-            });
-        appendGroup(
-            div, 
-            "Misc", 
-            function(tab) {
-                return !normalizeString(tab.url).match(normalizeString("stackoverflow"))
-            });
-    } else {
-        button_toggle_ui.innerHTML = "Autogroup";
-        input_search_tab.style.visibility = "visible";
-        renderSearchResults(input_search_tab.value);
-    }
-
-
+    bg.ui_state = bg.ui_state === UI_NORMAL ? UI_AUTOGROUP : UI_NORMAL;
+    renderSearchResults(document.getElementById("input_search_tab").value);
 }
 
 function appendGroup(div, group_title, matcher) {
@@ -85,12 +60,24 @@ function renderSearchResults(search_query) {
     var div = document.getElementById("content");
     div.innerHTML = "";
 
-    for (var i = 0; i < bg.tabs.length; ++i) {
-        var tab = bg.tabs[i];
-        if (isMatch(tab, search_query)) {
-            addSearchResult(div, tab);
-        }
-    }    
+    if (bg.ui_state === UI_AUTOGROUP) { 
+        appendGroup(
+            div, 
+            "Stackoverflow", 
+            function(tab) {
+                return normalizeString(tab.url).match(normalizeString("stackoverflow")) 
+                    && isMatch(tab, search_query);
+            });
+        appendGroup(
+            div, 
+            "Misc", 
+            function(tab) {
+                return !normalizeString(tab.url).match(normalizeString("stackoverflow")) 
+                    && isMatch(tab, search_query);
+            });
+    } else {
+        appendGroup(div, "", function(tab) {return isMatch(tab, search_query);})
+    }
 }
 
 /** Callback method is triggered when user modifies search query in the search box. */
@@ -113,7 +100,7 @@ window.onload = function() {
     // create autogroup button
     var button_toggle_ui = document.createElement("button");
     button_toggle_ui.id = "button_toggle_ui";
-    button_toggle_ui.innerHTML = bg.ui_state === UI_SEARCH ? "Autogroup" : "Search";
+    button_toggle_ui.innerHTML = "Autogroup";
     button_toggle_ui.onclick = function() {onClickToggleUi()};
     button_toggle_ui.classList.add("btn");
     document.getElementById("autogroup_div").appendChild(button_toggle_ui);
