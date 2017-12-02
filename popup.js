@@ -19,18 +19,40 @@ function isMatch(tab, query) {
 
 /** Adds HTML for search result item and appends to div. */
 function addSearchResult(div, tab) {
-    var button = document.createElement("button");
-    button.classList.add("btn");
-    button.classList.add("btn-block");
-    button.innerHTML = tab.title;
-    button.onclick = function() {activateTab(tab.windowId, tab.id)};
-    div.appendChild(button);
+
+    var search_result_div = document.createElement("row");
+    var icon_div = document.createElement("img");
+    icon_div.setAttribute("src",tab.favIconUrl);
+    var span_div = document.createElement("span");
+    span_div.innerHTML = tab.title;
+    var switch_tab_button = document.createElement("div");
+    var close_tab_button = document.createElement("div");
+    
+    switch_tab_button.classList.add("btn", "btn-primary", "col-10");
+    close_tab_button.classList.add("btn", "btn-danger", "col-2");
+    switch_tab_button.appendChild(icon_div);
+    switch_tab_button.appendChild(span_div);
+    close_tab_button.innerHTML = "Close";
+
+    search_result_div.appendChild(switch_tab_button);
+    search_result_div.appendChild(close_tab_button);
+
+
+    switch_tab_button.onclick = function() {activateTab(tab.windowId, tab.id)};
+    close_tab_button.onclick = function() {removeTab(div, search_result_div, tab.id)};
+    div.appendChild(search_result_div);
 }
 
 /** Switches to tab identified by window_id and tab_id. */
 function activateTab(window_id, tab_id) {
     chrome.windows.update(window_id, {focused: true});
     chrome.tabs.update(tab_id, {active: true});
+}
+
+/** Closes tab identified by tab_id. */
+function removeTab(div, button_group_div, tab_id) {
+    div.removeChild(button_group_div);
+    chrome.tabs.remove(tab_id);
 }
 
 /** Onclick method for UI toggle button. */
@@ -80,7 +102,7 @@ function renderSearchResults(search_query) {
     }
 }
 
-/** Callback method is triggered when user modifies search query in the search box. */
+/** Callbcka method is triggered when user modifies search query in the search box. */
 var onSearchInputChanged = function(event) {
     var input_search_tab = document.getElementById("input_search_tab");
     bg.last_search_query = input_search_tab.value;
