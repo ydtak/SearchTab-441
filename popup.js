@@ -28,7 +28,7 @@ function addSearchResult(div, tab) {
     var switch_tab_button = document.createElement("div");
     var close_tab_button = document.createElement("div");
     
-    switch_tab_button.classList.add("btn", "btn-primary", "col-10");
+    switch_tab_button.classList.add("btn", "btn-secondary", "col-10");
     close_tab_button.classList.add("btn", "btn-danger", "col-2");
     switch_tab_button.appendChild(icon_div);
     switch_tab_button.appendChild(span_div);

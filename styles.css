@@ -12,6 +12,12 @@ input {
     width: 100%;
 }
 
+.btn-secondary{
+	color: white;
+    background-color: #2E4053;
+    border-color: #ccc;
+}
+
 div img {
     position: absolute;
     left: 5px;
@@ -20,7 +26,7 @@ div img {
   	max-height: 90%;
 }
 
-div {
+div{
 	margin-bottom: 4px;
 }
 
@@ -30,3 +36,4 @@ div span {
     overflow:hidden;
     text-overflow:ellipsis;
 }
+
