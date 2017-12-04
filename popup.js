@@ -52,7 +52,12 @@ function activateTab(window_id, tab_id) {
 
 /** Closes tab identified by tab_id. */
 function removeTab(div, button_group_div, tab_id) {
+    previous = button_group_div.previousSibling;
+    next = button_group_div.nextSibling;
     div.removeChild(button_group_div);
+    if(previous.nodeName == "H3" && next.nodeName == "H3"){
+        previous.parentNode.removeChild(previous);
+    }
     chrome.tabs.remove(tab_id);
 }
 
@@ -93,14 +98,14 @@ function renderSearchResults(search_query) {
     console.log(domains);
     if (bg.ui_state === UI_AUTOGROUP) {
 
-        for(var key in domains){
-            cleanedKey = key;            
-            // cleanedKey = cleanDomainName(cleanedKey);
+        for(var domain in domains){
+            cleanedDomain = domain;
+            cleanedDomain = cleanDomain(cleanedDomain,true)
             appendGroup(
             div, 
-            cleanedKey, 
+            cleanedDomain, 
             function(tab) {
-                return normalizeString(tab.url).match(normalizeString(key)) 
+                return normalizeString(tab.url).match(normalizeString(domain)) 
                     && isMatch(tab, search_query);
             }); 
         } 
@@ -109,22 +114,42 @@ function renderSearchResults(search_query) {
     }
 }
 
-// function cleanDomainName(domain){
-//     //removes .com from domain name
-//     console.log(domain);
-//     lastDotIndex = domain.lastIndexOf(".");
-//     firstDotIndex = domain.indexOf(".");
-//     if(lastDotIndex != -1 && firstDotIndex != -1) {
-//         domain = domain.substring(0,domain.lastIndexOf("."));
-//         domain = domain.substring(firstDotIndex+1,domain.length);
-//         domain = domain.split(".").join(" ");
-//     }
-//     if(lastDotIndex == -1 && firstDotIndex == -1){
-//         return domain.toUpperCase();
-//     }
-//     return domain;
-// }
+function cleanDomain(url, subdomain) {
+    subdomain = subdomain || false;
 
+    url = url.replace(/(https?:\/\/)?(www.)?/i, '');
+    lastDotIndex = url.lastIndexOf(".");
+    if (!subdomain) {
+        url = url.split('.');
+
+        url = url.slice(url.length - 2).join('.');
+    }
+
+    if (url.indexOf('/') !== -1) {
+        return url.split('/')[0];
+    }
+    //.com from word
+    if(lastDotIndex != -1){
+        url = url.substring(0,lastDotIndex);
+    }
+    //
+    remainingDotIdx = url.indexOf(".");
+    if(remainingDotIdx != -1){
+        newurl = url.split(".");
+        temp = newurl[newurl.length-1];
+        newurl[newurl.length-1] = titleCase(newurl[0]);
+        newurl[0] = titleCase(temp);
+        url = newurl.join(" ");
+    }
+
+    return titleCase(url);
+}
+
+function titleCase(str) {
+  return str.toLowerCase().split(' ').map(function(word) {
+    return (word.charAt(0).toUpperCase() + word.slice(1));
+  }).join(' ');
+}
 
 /** Callbcka method is triggered when user modifies search query in the search box. */
 var onSearchInputChanged = function(event) {
