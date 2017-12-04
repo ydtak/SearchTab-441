@@ -22,6 +22,7 @@ function addSearchResult(div, tab) {
 
     var search_result_div = document.createElement("row");
     var icon_div = document.createElement("img");
+    var br = document.createElement("BR");
     icon_div.setAttribute("src",tab.favIconUrl);
     var span_div = document.createElement("span");
     span_div.innerHTML = tab.title;
@@ -82,25 +83,48 @@ function renderSearchResults(search_query) {
     var div = document.getElementById("content");
     div.innerHTML = "";
 
-    if (bg.ui_state === UI_AUTOGROUP) { 
-        appendGroup(
+    var domains = {};
+    for (var i = 0; i < bg.tabs.length; ++i) {
+        var tab = bg.tabs[i];
+        var url = new URL(tab.url)
+        var domain = url.hostname
+        domains[domain] = domain;
+    }    
+    console.log(domains);
+    if (bg.ui_state === UI_AUTOGROUP) {
+
+        for(var key in domains){
+            cleanedKey = key;            
+            // cleanedKey = cleanDomainName(cleanedKey);
+            appendGroup(
             div, 
-            "Stackoverflow", 
+            cleanedKey, 
             function(tab) {
-                return normalizeString(tab.url).match(normalizeString("stackoverflow")) 
+                return normalizeString(tab.url).match(normalizeString(key)) 
                     && isMatch(tab, search_query);
-            });
-        appendGroup(
-            div, 
-            "Misc", 
-            function(tab) {
-                return !normalizeString(tab.url).match(normalizeString("stackoverflow")) 
-                    && isMatch(tab, search_query);
-            });
+            }); 
+        } 
     } else {
         appendGroup(div, "", function(tab) {return isMatch(tab, search_query);})
     }
 }
+
+// function cleanDomainName(domain){
+//     //removes .com from domain name
+//     console.log(domain);
+//     lastDotIndex = domain.lastIndexOf(".");
+//     firstDotIndex = domain.indexOf(".");
+//     if(lastDotIndex != -1 && firstDotIndex != -1) {
+//         domain = domain.substring(0,domain.lastIndexOf("."));
+//         domain = domain.substring(firstDotIndex+1,domain.length);
+//         domain = domain.split(".").join(" ");
+//     }
+//     if(lastDotIndex == -1 && firstDotIndex == -1){
+//         return domain.toUpperCase();
+//     }
+//     return domain;
+// }
+
 
 /** Callbcka method is triggered when user modifies search query in the search box. */
 var onSearchInputChanged = function(event) {

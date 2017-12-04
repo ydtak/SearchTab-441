@@ -14,7 +14,7 @@ input {
 
 .btn-secondary{
 	color: white;
-    background-color: #2E4053;
+    background-color: #5D6D7E;
     border-color: #ccc;
 }
 
@@ -26,9 +26,6 @@ div img {
   	max-height: 90%;
 }
 
-div{
-	margin-bottom: 4px;
-}
 
 div span {
 	display:inline-block;
