@@ -16,14 +16,16 @@ input {
 	color: white;
     background-color: #5D6D7E;
     border-color: #ccc;
+    padding: 10px 20px;
+    font-size: 20px;
 }
 
 div img {
     position: absolute;
     left: 5px;
-    bottom: 2px;
-    max-width: 90%;
-  	max-height: 90%;
+    bottom: 10%;
+    max-width: 80%;
+  	max-height: 80%;
 }
 
 
@@ -34,3 +36,6 @@ div span {
     text-overflow:ellipsis;
 }
 
+.btn-danger {
+    padding: 10px 20px;       
+}
