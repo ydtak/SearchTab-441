@@ -54,8 +54,9 @@ function activateTab(window_id, tab_id) {
 function removeTab(div, button_group_div, tab_id) {
     previous = button_group_div.previousSibling;
     next = button_group_div.nextSibling;
+    console.log(next);
     div.removeChild(button_group_div);
-    if(previous.nodeName == "H3" && next.nodeName == "H3"){
+    if(previous.nodeName == "H3" && (next == null || next.nodeName=="H3")){
         previous.parentNode.removeChild(previous);
     }
     chrome.tabs.remove(tab_id);
@@ -68,18 +69,28 @@ function onClickToggleUi() {
 }
 
 function appendGroup(div, group_title, matcher) {
+
     // create group title
     var title_h3 = document.createElement("h3");
     title_h3.innerHTML = group_title;
-    div.appendChild(title_h3);
 
     // add tabs
+    //if a domain group does not have a result
+    //use this to ensure that title_h3 does not get added
+    title_added = false;
     for (var i = 0; i < bg.tabs.length; ++i) {
         var tab = bg.tabs[i];
         if (matcher(tab)) {
+
+            if(!title_added) {
+                div.appendChild(title_h3);
+            }
+
+            title_added = true;
             addSearchResult(div, tab);
         }
-    }    
+    }
+
 }
 
 /** Renders new search results on popup. */
@@ -95,6 +106,8 @@ function renderSearchResults(search_query) {
         var domain = url.hostname
         domains[domain] = domain;
     }    
+
+
     console.log(domains);
     if (bg.ui_state === UI_AUTOGROUP) {
 
