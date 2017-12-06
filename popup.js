@@ -1,6 +1,6 @@
 /** UI States. */
-const UI_AUTOGROUP = "UI_AUTOGROUP";
-const UI_NORMAL = "UI_NORMAL";
+// const UI_AUTOGROUP = "UI_AUTOGROUP";
+// const UI_NORMAL = "UI_NORMAL";
 const CRTL_KEYCODE = 17;
 const UP_KEYCODE = 38;
 const DOWN_KEYCODE = 40;
@@ -38,22 +38,12 @@ document.addEventListener('keydown', (event)=> {
     }
 });
 
-$(document).ready(function() { document.getElementById("autogroup_div").addEventListener("click", function(){
-    if(resultElementSelected){
-        $('.focusedResult').removeClass("focusedResult");
-    } else if(closeElementSelected){
-        $('.focusedClosed').removeClass("focusedClosed");
-    }
-    resultElementSelected = false;
-    closeElementSelected = false;
-    elementSelected = false;
-});
-});
 
 /** Used for hotkeys **/
 var resultElementSelected = false;
 var closeElementSelected = false;
 var elementSelected = false;
+
 
 function clickPressed(){
     if(closeElementSelected) {
@@ -155,7 +145,7 @@ function normalizeString(str) {
 /** Returns true if tab is a match for query. */
 function isMatch(tab, query) {
     return normalizeString(tab.title).match(normalizeString(query)) 
-        || normalizeString(tab.url).match(normalizeString(query));
+    || normalizeString(tab.url).match(normalizeString(query));
 }
 
 /** Adds HTML for search result item and appends to div. */
@@ -224,7 +214,7 @@ function appendGroup(div, group_title, matcher) {
     for (var i = 0; i < bg.tabs.length; ++i) {
         var tab = bg.tabs[i];
         if (matcher(tab)) {
-            if(!title_added && bg.ui_state === UI_AUTOGROUP) {
+            if(!title_added) {
                 div.appendChild(title_h3);
             }
 
@@ -260,21 +250,15 @@ function renderSearchResults(search_query) {
       domains[key] = unorderedDomains[key];
     });
 
-    if (bg.ui_state === UI_AUTOGROUP) {
-
-        for(var domain in domains){
-            appendGroup(
+    for(var domain in domains){
+        appendGroup(
             div, 
             domain, 
             function(tab) {
                 return normalizeString(tab.url).match(normalizeString(domains[domain])) 
-                    && isMatch(tab, search_query);
+                && isMatch(tab, search_query);
             }); 
-        } 
     } 
-    else {
-        appendGroup(div, "", function(tab) {return isMatch(tab, search_query);})
-    }
 
     //used to help identify position for shortcut
     var last = document.createElement("div");
@@ -316,7 +300,7 @@ function cleanDomain(url, subdomain) {
 function titleCase(str) {
   return str.toLowerCase().split(' ').map(function(word) {
     return (word.charAt(0).toUpperCase() + word.slice(1));
-  }).join(' ');
+}).join(' ');
 }
 
 /** Callbcka method is triggered when user modifies search query in the search box. */
