@@ -3,26 +3,30 @@
   <head>
     <title>SearchTab</title>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
     <script src="popup.js"></script>
   </head>
 
   <body>
-    <div class="container">
+
+
+
       <div class="row">
-        <div class="col-8">
+        <div class="col-12">
           <h1>SearchTab</h1>
         </div>
-        <div class="col-4">
-          <div id="autogroup_div"></div>
-        </div>
+
       </div>
-    </div>
+
 
     <form>
-      <input type="text" id="input_search_tab" class="form-control" autofocus>
+      <input type="text" autocomplete="off" id="input_search_tab" class="form-control" autofocus>
     </form>
-    <br/>
-        <div id="content"></div>
+
+        <div id="content">
+          <div id="first"></div>
+        </div>
+
   </body>
 </html>

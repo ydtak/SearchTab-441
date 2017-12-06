@@ -1,10 +1,151 @@
-
 /** UI States. */
 const UI_AUTOGROUP = "UI_AUTOGROUP";
 const UI_NORMAL = "UI_NORMAL";
+const CRTL_KEYCODE = 17;
+const UP_KEYCODE = 38;
+const DOWN_KEYCODE = 40;
+const RIGHT_KEYCODE = 39;
+const LEFT_KEYCODE = 37;
+const ENTER_KEYCODE = 13;
 
 /** Reference to background page. */
 var bg = chrome.extension.getBackgroundPage();
+
+let pressed = {};
+document.addEventListener('keydown', (event)=> {
+    pressed[event.keyCode] = true;
+});
+
+document.addEventListener('keyup', (event)=> {
+    delete pressed[event.keyCode];
+    console.log(pressed);
+}); 
+
+document.addEventListener('keydown', (event)=> {
+    if(pressed[CRTL_KEYCODE] && pressed[UP_KEYCODE]){
+        focusChange("up");
+    }
+    else if(pressed[CRTL_KEYCODE] && pressed[DOWN_KEYCODE]){
+        focusChange("down");
+    }
+    else if(pressed[CRTL_KEYCODE] && pressed[RIGHT_KEYCODE]){
+        focusChange("right");
+    }
+    else if(pressed[CRTL_KEYCODE] && pressed[LEFT_KEYCODE]){
+        focusChange("left");
+    } else if(pressed[CRTL_KEYCODE] && pressed[ENTER_KEYCODE]) {
+        clickPressed();
+    }
+});
+
+$(document).ready(function() { document.getElementById("autogroup_div").addEventListener("click", function(){
+    if(resultElementSelected){
+        $('.focusedResult').removeClass("focusedResult");
+    } else if(closeElementSelected){
+        $('.focusedClosed').removeClass("focusedClosed");
+    }
+    resultElementSelected = false;
+    closeElementSelected = false;
+    elementSelected = false;
+});
+});
+
+/** Used for hotkeys **/
+var resultElementSelected = false;
+var closeElementSelected = false;
+var elementSelected = false;
+
+function clickPressed(){
+    if(closeElementSelected) {
+        $('.focusedClosed').click();
+        closeElementSelected = false;
+        elementSelected = false;
+    } else if(resultElementSelected){
+        elementSelected = false;
+        resultElementSelected = false;
+        $('.focusedResult').click()
+        $('.focusedResult').removeClass("focusedResult");
+
+    }
+}
+
+function focusChange(keypress){
+    if (elementSelected == false) {
+        nextToSelect = $('#content').find('.first').next()
+        console.log(nextToSelect[0].tagName);
+        if(nextToSelect[0].tagName == "H3"){
+
+            nextToSelect.next().find('.btn-secondary').addClass("focusedResult");
+        } else{
+            nextToSelect.find('.btn-secondary').addClass("focusedResult");
+        }
+        elementSelected = true;
+        resultElementSelected = true;
+        $('.focusedResult')[0].scrollIntoView();
+    } else {
+        if(resultElementSelected) {
+            if(keypress == "right"){
+                var nextToSelect = $('.focusedResult').next();
+                console.log(nextToSelect);
+                $('.focusedResult').removeClass('focusedResult');
+                nextToSelect.addClass("focusedClosed");
+                resultElementSelected = false;
+                closeElementSelected = true;
+                $('.focusedClosed')[0].scrollIntoView();
+            }
+            var nextToSelect = nextDivElementForFocus(keypress, '.focusedResult');
+            if(nextToSelect != null) {
+                $('.focusedResult').removeClass('focusedResult');
+                nextToSelect.find('.btn-secondary').addClass("focusedResult");
+                $('.focusedResult')[0].scrollIntoView();
+            } 
+        }
+        if(closeElementSelected){
+            if(keypress == "left"){
+                var nextToSelect = $('.focusedClosed').prev();
+                console.log(nextToSelect);
+                $('.focusedClosed').removeClass('focusedClosed');
+                nextToSelect.addClass("focusedResult");
+                closeElementSelected = false;
+                resultElementSelected = true;
+                $('.focusedClosed')[0].scrollIntoView();
+            }
+
+            var nextToSelect = nextDivElementForFocus(keypress, '.focusedClosed');
+            if(nextToSelect != null) {
+                $('.focusedClosed').removeClass('focusedClosed');
+                nextToSelect.find('.btn-danger').addClass("focusedClosed");
+                $('.focusedClosed')[0].scrollIntoView();
+            }
+
+        }
+
+    }
+}
+
+function nextDivElementForFocus(keypress, focus){
+    if(keypress == "up"){
+        var nextToSelect = $(focus).parent().prev();
+
+        if(nextToSelect[0].tagName == "H3"){
+            nextToSelect = nextToSelect.prev();
+        }
+        if(nextToSelect.hasClass("first")) {
+            return null
+        }
+
+        return nextToSelect
+    } else if(keypress == "down"){
+        var nextToSelect = $(focus).parent().next();
+        if(nextToSelect.hasClass("last")) {
+            return null
+        }
+        if(nextToSelect[0].tagName == "H3"){
+            nextToSelect = nextToSelect.next();
+        }
+        return nextToSelect
+    }
+}
 
 /** Normalize string for string content comparisons. */
 function normalizeString(str) {
@@ -35,6 +176,7 @@ function addSearchResult(div, tab) {
     switch_tab_button.appendChild(span_div);
     close_tab_button.innerHTML = "Close";
 
+
     search_result_div.appendChild(switch_tab_button);
     search_result_div.appendChild(close_tab_button);
 
@@ -46,8 +188,9 @@ function addSearchResult(div, tab) {
 
 /** Switches to tab identified by window_id and tab_id. */
 function activateTab(window_id, tab_id) {
-    chrome.windows.update(window_id, {focused: true});
     chrome.tabs.update(tab_id, {active: true});
+    chrome.windows.update(window_id, {focused: true});
+
 }
 
 /** Closes tab identified by tab_id. */
@@ -56,7 +199,7 @@ function removeTab(div, button_group_div, tab_id) {
     next = button_group_div.nextSibling;
     console.log(next);
     div.removeChild(button_group_div);
-    if(previous.nodeName == "H3" && (next == null || next.nodeName=="H3")){
+    if(previous.nodeName == "H3" && (next.classList.contains("last") || next.nodeName=="H3")){
         previous.parentNode.removeChild(previous);
     }
     chrome.tabs.remove(tab_id);
@@ -72,7 +215,7 @@ function appendGroup(div, group_title, matcher) {
 
     // create group title
     var title_h3 = document.createElement("h3");
-    title_h3.innerHTML = group_title;
+    title_h3.innerHTML = "<br>" + group_title;
 
     // add tabs
     //if a domain group does not have a result
@@ -81,8 +224,7 @@ function appendGroup(div, group_title, matcher) {
     for (var i = 0; i < bg.tabs.length; ++i) {
         var tab = bg.tabs[i];
         if (matcher(tab)) {
-
-            if(!title_added) {
+            if(!title_added && bg.ui_state === UI_AUTOGROUP) {
                 div.appendChild(title_h3);
             }
 
@@ -99,32 +241,45 @@ function renderSearchResults(search_query) {
     var div = document.getElementById("content");
     div.innerHTML = "";
 
-    var domains = {};
+    //used to help identify position for shortcut
+    var first = document.createElement("div");
+    first.classList.add("first");
+    div.appendChild(first);
+
+    var unorderedDomains = {};
     for (var i = 0; i < bg.tabs.length; ++i) {
         var tab = bg.tabs[i];
         var url = new URL(tab.url)
         var domain = url.hostname
-        domains[domain] = domain;
+        var cleanedDomain = cleanDomain(domain,true)
+        unorderedDomains[cleanedDomain] = domain;
     }    
 
+    var domains = {};
+    Object.keys(unorderedDomains).sort().forEach(function(key) {
+      domains[key] = unorderedDomains[key];
+    });
 
-    console.log(domains);
     if (bg.ui_state === UI_AUTOGROUP) {
 
         for(var domain in domains){
-            cleanedDomain = domain;
-            cleanedDomain = cleanDomain(cleanedDomain,true)
             appendGroup(
             div, 
-            cleanedDomain, 
+            domain, 
             function(tab) {
-                return normalizeString(tab.url).match(normalizeString(domain)) 
+                return normalizeString(tab.url).match(normalizeString(domains[domain])) 
                     && isMatch(tab, search_query);
             }); 
         } 
-    } else {
+    } 
+    else {
         appendGroup(div, "", function(tab) {return isMatch(tab, search_query);})
     }
+
+    //used to help identify position for shortcut
+    var last = document.createElement("div");
+    last.classList.add("last");
+    div.appendChild(last);
 }
 
 function cleanDomain(url, subdomain) {

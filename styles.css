@@ -13,11 +13,18 @@ input {
 }
 
 .btn-secondary{
-	color: white;
-    background-color: #5D6D7E;
-    border-color: #ccc;
+
+    color: #292b2c;
+    background-color: #e6e6e6;
+    border-color: #adadad;
     padding: 10px 20px;
     font-size: 20px;
+}
+
+.btn-secondary:hover{
+    color: white;
+    background-color: #5D6D7E;
+    border-color: #ccc;
 }
 
 div img {
@@ -37,5 +44,24 @@ div span {
 }
 
 .btn-danger {
-    padding: 10px 20px;       
+    color: black;
+    background-color: #FADBD8;
+    border-color: #c12e2a;
+     
+}
+
+.focusedResult {
+    color: white;
+    background-color: #5D6D7E;
+    border-color: #ccc;
+}
+.focusedClosed {
+    color: #fff;
+    background-color: #c9302c;
+    border-color: #c12e2a;
+
+}
+
+.fixed {
+    position: fixed;
 }
