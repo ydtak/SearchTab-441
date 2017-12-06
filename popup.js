@@ -59,19 +59,24 @@ function clickPressed(){
         resultElementSelected = false;
         $('.focusedResult').click()
         $('.focusedResult').removeClass("focusedResult");
-
     }
 }
 
 
+var lastScrolledY = 0;
 function scrollIntoViewElement(node){
+    
     var headerHeight = $("#header").height();
     node.scrollIntoView(true);
     var scrolledY = window.scrollY;
 
-    if(scrolledY){
+    if(lastScrolledY == scrolledY){
+        window.scroll(0,document.body.scrollHeight);
+    } else {
+        lastScrolledY = scrolledY;
         window.scroll(0, scrolledY - headerHeight - 23);
     }
+      
 }
 
 function isScrolledIntoView(elem) {
@@ -100,7 +105,6 @@ function focusChange(keypress){
         }
         elementSelected = true;
         resultElementSelected = true;
-        // $('.focusedResult')[0].scrollIntoView();
         scrollIntoViewElement($('.focusedResult')[0])
     } else {
         if(resultElementSelected) {
@@ -111,14 +115,12 @@ function focusChange(keypress){
                 nextToSelect.addClass("focusedClosed");
                 resultElementSelected = false;
                 closeElementSelected = true;
-                // $('.focusedClosed')[0].scrollIntoView();
                 scrollIntoViewElement($('.focusedClosed')[0])
             }
             var nextToSelect = nextDivElementForFocus(keypress, '.focusedResult');
             if(nextToSelect != null) {
                 $('.focusedResult').removeClass('focusedResult');
                 nextToSelect.find('.btn-secondary').addClass("focusedResult");
-                // $('.focusedResult')[0].scrollIntoView();
                 scrollIntoViewElement($('.focusedResult')[0])
             } 
         }
@@ -130,7 +132,6 @@ function focusChange(keypress){
                 nextToSelect.addClass("focusedResult");
                 closeElementSelected = false;
                 resultElementSelected = true;
-                // $('.focusedClosed')[0].scrollIntoView();
                 scrollIntoViewElement($('.focusedClosed')[0])
             }
 
@@ -138,7 +139,6 @@ function focusChange(keypress){
             if(nextToSelect != null) {
                 $('.focusedClosed').removeClass('focusedClosed');
                 nextToSelect.find('.btn-danger').addClass("focusedClosed");
-                // $('.focusedClosed')[0].scrollIntoView();
                 scrollIntoViewElement($('.focusedClosed')[0])
             }
 
