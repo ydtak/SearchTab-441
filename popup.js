@@ -7,6 +7,8 @@ const DOWN_KEYCODE = 40;
 const RIGHT_KEYCODE = 39;
 const LEFT_KEYCODE = 37;
 const ENTER_KEYCODE = 13;
+const SHIFT_KEYCODE = 16;
+const S_KEYCODE = 83;
 
 /** Reference to background page. */
 var bg = chrome.extension.getBackgroundPage();
@@ -35,6 +37,8 @@ document.addEventListener('keydown', (event)=> {
         focusChange("left");
     } else if(pressed[CRTL_KEYCODE] && pressed[ENTER_KEYCODE]) {
         clickPressed();
+    } else if(pressed[CRTL_KEYCODE] && pressed[SHIFT_KEYCODE] && pressed[S_KEYCODE]){
+        setFocusToSearch();
     }
 });
 
@@ -59,6 +63,31 @@ function clickPressed(){
     }
 }
 
+
+function scrollIntoViewElement(node){
+    var headerHeight = $("#header").height();
+    node.scrollIntoView(true);
+    var scrolledY = window.scrollY;
+
+    if(scrolledY){
+        window.scroll(0, scrolledY - headerHeight - 23);
+    }
+}
+
+function isScrolledIntoView(elem) {
+    var docViewTop = $(window).scrollTop();
+    var docViewBottom = docViewTop + $(window).height();
+
+    var elemTop = $(elem).offset().top;
+    var elemBottom = elemTop + $(elem).height();
+
+    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+}
+
+function setFocusToSearch(){
+    document.getElementById("input_search_tab").focus();
+}
+
 function focusChange(keypress){
     if (elementSelected == false) {
         nextToSelect = $('#content').find('.first').next()
@@ -71,7 +100,8 @@ function focusChange(keypress){
         }
         elementSelected = true;
         resultElementSelected = true;
-        $('.focusedResult')[0].scrollIntoView();
+        // $('.focusedResult')[0].scrollIntoView();
+        scrollIntoViewElement($('.focusedResult')[0])
     } else {
         if(resultElementSelected) {
             if(keypress == "right"){
@@ -81,13 +111,15 @@ function focusChange(keypress){
                 nextToSelect.addClass("focusedClosed");
                 resultElementSelected = false;
                 closeElementSelected = true;
-                $('.focusedClosed')[0].scrollIntoView();
+                // $('.focusedClosed')[0].scrollIntoView();
+                scrollIntoViewElement($('.focusedClosed')[0])
             }
             var nextToSelect = nextDivElementForFocus(keypress, '.focusedResult');
             if(nextToSelect != null) {
                 $('.focusedResult').removeClass('focusedResult');
                 nextToSelect.find('.btn-secondary').addClass("focusedResult");
-                $('.focusedResult')[0].scrollIntoView();
+                // $('.focusedResult')[0].scrollIntoView();
+                scrollIntoViewElement($('.focusedResult')[0])
             } 
         }
         if(closeElementSelected){
@@ -98,14 +130,16 @@ function focusChange(keypress){
                 nextToSelect.addClass("focusedResult");
                 closeElementSelected = false;
                 resultElementSelected = true;
-                $('.focusedClosed')[0].scrollIntoView();
+                // $('.focusedClosed')[0].scrollIntoView();
+                scrollIntoViewElement($('.focusedClosed')[0])
             }
 
             var nextToSelect = nextDivElementForFocus(keypress, '.focusedClosed');
             if(nextToSelect != null) {
                 $('.focusedClosed').removeClass('focusedClosed');
                 nextToSelect.find('.btn-danger').addClass("focusedClosed");
-                $('.focusedClosed')[0].scrollIntoView();
+                // $('.focusedClosed')[0].scrollIntoView();
+                scrollIntoViewElement($('.focusedClosed')[0])
             }
 
         }
@@ -320,11 +354,30 @@ window.onload = function() {
     input_search_tab.select();
     renderSearchResults(input_search_tab.value);
 
-    // create autogroup button
-    var button_toggle_ui = document.createElement("button");
-    button_toggle_ui.id = "button_toggle_ui";
-    button_toggle_ui.innerHTML = "Autogroup";
-    button_toggle_ui.onclick = function() {onClickToggleUi()};
-    button_toggle_ui.classList.add("btn");
-    document.getElementById("autogroup_div").appendChild(button_toggle_ui);
+    // // create autogroup button
+    // var button_toggle_ui = document.createElement("button");
+    // button_toggle_ui.id = "button_toggle_ui";
+    // button_toggle_ui.innerHTML = "Autogroup";
+    // button_toggle_ui.onclick = function() {onClickToggleUi()};
+    // button_toggle_ui.classList.add("btn");
+    // // document.getElementById("autogroup_div").appendChild(button_toggle_ui);
 }
+
+
+// // When the user scrolls the page, execute scrollNavbar 
+// window.onscroll = function() {scrollNavbar()};
+
+// // Get the navbar
+// var navbar = document.getElementById("navbar");
+
+// // Get the offset position of the navbar
+// var sticky = navbar.offsetTop;
+
+// // Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
+// function scrollNavbar() {
+//   if (window.pageYOffset >= sticky) {
+//     navbar.classList.add("sticky")
+//   } else {
+//     navbar.classList.remove("sticky");
+//   }
+// }

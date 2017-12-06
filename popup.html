@@ -1,32 +1,30 @@
 <!doctype html>
 <html>
-  <head>
-    <title>SearchTab</title>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
-    <script src="popup.js"></script>
-  </head>
+<head>
+  <title>SearchTab</title>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+  <script src="popup.js"></script>
+</head>
 
-  <body>
+<body>
 
-
-
-      <div class="row">
-        <div class="col-12">
-          <h1>SearchTab</h1>
-        </div>
-
+  <nav class="navbar navbar-default fixed-top" style="background-color: white;" id ="header">
+    <div class="row">
+      <div class="col-12">
+        <h1>SearchTab</h1>
       </div>
 
+    </div>
 
     <form>
       <input type="text" autocomplete="off" id="input_search_tab" class="form-control" autofocus>
     </form>
+  </nav>
+  <div id="content">
+    <div id="first"></div>
+  </div>
 
-        <div id="content">
-          <div id="first"></div>
-        </div>
-
-  </body>
+</body>
 </html>

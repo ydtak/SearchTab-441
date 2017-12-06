@@ -10,6 +10,8 @@ input {
 
 #content {
     width: 100%;
+    padding-top: 70px;
+
 }
 
 .btn-secondary{
@@ -60,8 +62,4 @@ div span {
     background-color: #c9302c;
     border-color: #c12e2a;
 
-}
-
-.fixed {
-    position: fixed;
 }
